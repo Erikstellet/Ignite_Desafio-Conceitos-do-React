@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import '../styles/tasklist.scss'
 
-import { FiTrash, FiCheckSquare } from 'react-icons/fi'
+import { FiTrash, FiCheckSquare } from 'react-icons/fi';
 
 interface Task {
   id: number;
@@ -14,16 +14,50 @@ export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
-  function handleCreateNewTask() {
+  function handleCreateNewTask(newTaskTitle: string): void {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+
+    const id = Math.floor(Date.now() * Math.random());
+    
+    if(newTaskTitle !== '') {
+      setTasks([
+        ...tasks,
+        {
+          id,
+          title: newTaskTitle,
+          isComplete: false,
+        }
+      ]);
+    } else {
+      return;
+    }
   }
 
   function handleToggleTaskCompletion(id: number) {
-    // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID.
+
+    tasks.map((task) => 
+    {
+      if (task.id == id) {
+        task.isComplete = !task.isComplete;
+      }
+    })
+
+    setTasks([...tasks]);
   }
 
   function handleRemoveTask(id: number) {
-    // Remova uma task da listagem pelo ID
+    // Remova uma task da listagem pelo .
+
+    tasks.map((task, i) => 
+    {
+      if (task.id == id) {
+        tasks.splice(i, 1);
+      }
+    })
+
+    setTasks([...tasks]);
+    
   }
 
   return (
@@ -38,7 +72,7 @@ export function TaskList() {
             onChange={(e) => setNewTaskTitle(e.target.value)}
             value={newTaskTitle}
           />
-          <button type="submit" data-testid="add-task-button" onClick={handleCreateNewTask}>
+          <button type="submit" data-testid="add-task-button" onClick={() => handleCreateNewTask(newTaskTitle)}>
             <FiCheckSquare size={16} color="#fff"/>
           </button>
         </div>
